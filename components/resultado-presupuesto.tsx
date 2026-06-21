@@ -121,10 +121,10 @@ export function ResultadoPresupuesto({
         ) : (
           <Fila label="Revestimiento" detalle="Sin revestimiento" valor={moneda(0)} mostrarValor={!esCliente} />
         )}
-        {p.panoFijoEnabled && p.panoFijoAlto > 0 && p.panoFijoAncho > 0 ? (
+        {Boolean(p.panoFijoEnabled) && p.panoFijoAlto > 0 && p.panoFijoAncho > 0 ? (
           <Fila
             label="Paño fijo"
-            detalle={`${p.panoFijoAlto} × ${p.panoFijoAncho} m · ${(p.panoFijoAlto * p.panoFijoAncho).toFixed(2)} m²`}
+            detalle={`Perímetro ${((p.panoFijoAlto + p.panoFijoAncho) * 2).toFixed(2)} m`}
             valor={moneda(r.costoPanoFijo)}
             mostrarValor={!esCliente}
           />

@@ -192,11 +192,11 @@ export function CamposCotizador({ valores, onChange }: Props) {
                 <div className="flex items-center justify-between">
                   <Label className="text-sm font-medium">Activar paño fijo</Label>
                   <Switch
-                    checked={valores.panoFijoEnabled}
+                    checked={Boolean(valores.panoFijoEnabled)}
                     onCheckedChange={(checked) => onChange("panoFijoEnabled", checked ? 1 : 0)}
                   />
                 </div>
-                {valores.panoFijoEnabled && (
+                {Boolean(valores.panoFijoEnabled) && (
                   <div className={`grid grid-cols-1 gap-4 sm:grid-cols-2 overflow-hidden transition-all duration-300`}>
                     {grupo.campos.map((campo) => (
                       <div key={campo.key} className="flex flex-col gap-1.5">

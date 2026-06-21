@@ -94,8 +94,8 @@ export function calcular(p: Parametros): Resultado {
   const costoAluminio =
     costoMarco + costoBatiente + costoTravesano + costoTablilla
 
-  const metrosPanoFijo = p.panoFijoEnabled ? p.panoFijoAlto * p.panoFijoAncho : 0
-  const costoPanoFijo = metrosPanoFijo * p.panoFijoKgm * p.precioKg
+  const perimetroPanoFijo = Boolean(p.panoFijoEnabled) ? (p.panoFijoAlto + p.panoFijoAncho) * 2 : 0
+  const costoPanoFijo = perimetroPanoFijo * p.panoFijoKgm * p.precioKg
 
   const costoBisagras = p.bisagras * p.precioBisagra
   const costoCerradura = p.cerradura
