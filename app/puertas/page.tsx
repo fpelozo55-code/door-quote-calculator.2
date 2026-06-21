@@ -126,7 +126,7 @@ export default function Page() {
           </div>
           <div className="flex gap-2">
             <Button
-              variant="outline"
+              variant="secondary"
               onClick={() => router.push("/")}
               className="gap-2"
             >
