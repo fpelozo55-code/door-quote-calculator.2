@@ -4,7 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import type { Parametros } from "@/lib/cotizador"
-import { Ruler, Layers, Wrench, PlusCircle, SquareStack } from "lucide-react"
+import { Ruler, Layers, Wrench, PlusCircle, SquareStack, ChevronDown } from "lucide-react"
+import { useState } from "react"
+import { Switch } from "@/components/ui/switch"
 
 type Campo = {
   key: keyof Parametros
@@ -18,6 +20,7 @@ type Grupo = {
   subtitulo?: string
   icon: React.ReactNode
   campos: Campo[]
+  especial?: string
 }
 
 const GRUPOS: Grupo[] = [
@@ -38,10 +41,19 @@ const GRUPOS: Grupo[] = [
       { key: "pesoMarco", label: "Peso marco", suffix: "kg/m", step: "0.001" },
       { key: "pesoBatiente", label: "Peso batiente", suffix: "kg/m", step: "0.001" },
       { key: "pesoTravesano", label: "Peso travesaño", suffix: "kg/m", step: "0.001" },
-      { key: "pesoTablilla", label: "Peso tablilla", suffix: "kg/m", step: "0.001" },
       { key: "cantTravesanos", label: "Cantidad travesaños", step: "1" },
-      { key: "anchoTablilla", label: "Ancho tablilla", suffix: "m", step: "0.01" },
     ],
+    especial: "tablilla",
+  },
+  {
+    titulo: "Paño fijo",
+    icon: <SquareStack className="size-4" />,
+    campos: [
+      { key: "panoFijoAlto", label: "Alto", suffix: "m", step: "0.01" },
+      { key: "panoFijoAncho", label: "Ancho", suffix: "m", step: "0.01" },
+      { key: "panoFijoKgm", label: "Peso del perfil", suffix: "kg/m", step: "0.001" },
+    ],
+    especial: "panoFijo",
   },
   {
     titulo: "Revestimiento",
@@ -52,6 +64,7 @@ const GRUPOS: Grupo[] = [
       { key: "revAlto", label: "Alto", suffix: "m", step: "0.01" },
       { key: "precioRevM2", label: "Precio por m²", suffix: "$", step: "100" },
     ],
+    especial: "revestimiento",
   },
   {
     titulo: "Accesorios",
@@ -84,6 +97,22 @@ type Props = {
 }
 
 export function CamposCotizador({ valores, onChange }: Props) {
+  const [tipoTablilla, setTipoTablilla] = useState<"liviana" | "pesada">("liviana")
+  const [panoFijoExpanded, setPanoFijoExpanded] = useState(false)
+  const [panoFijoRevExpanded, setPanoFijoRevExpanded] = useState(false)
+  const [revestimientoExpanded, setRevestimientoExpanded] = useState(false)
+
+  const handleTablillaChange = (tipo: "liviana" | "pesada") => {
+    setTipoTablilla(tipo)
+    if (tipo === "liviana") {
+      onChange("pesoTablilla", 0.65)
+      onChange("anchoTablilla", 0.11)
+    } else {
+      onChange("pesoTablilla", 1.1)
+      onChange("anchoTablilla", 0.12)
+    }
+  }
+
   return (
     <div className="flex flex-col gap-5">
       {GRUPOS.map((grupo) => (
@@ -102,31 +131,215 @@ export function CamposCotizador({ valores, onChange }: Props) {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              {grupo.campos.map((campo) => (
-                <div key={campo.key} className="flex flex-col gap-1.5">
-                  <Label htmlFor={campo.key} className="text-sm font-medium">
-                    {campo.label}
-                    {campo.suffix ? (
-                      <span className="ml-1 text-xs font-normal text-muted-foreground">
-                        ({campo.suffix})
+            {grupo.especial === "tablilla" ? (
+              <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-2">
+                  <Label className="text-sm font-medium">Tipo de tablilla</Label>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleTablillaChange("liviana")}
+                      className={`flex-1 rounded-lg border-2 px-4 py-3 text-sm font-medium transition-colors ${
+                        tipoTablilla === "liviana"
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-border bg-background text-foreground hover:border-primary/50"
+                      }`}
+                    >
+                      Tablilla Liviana
+                      <span className="block text-xs font-normal mt-1 opacity-75">
+                        0.650 kg/m • 0.11 m
                       </span>
-                    ) : null}
-                  </Label>
-                  <Input
-                    id={campo.key}
-                    type="number"
-                    inputMode="decimal"
-                    step={campo.step ?? "any"}
-                    min={0}
-                    value={Number.isNaN(valores[campo.key]) ? "" : valores[campo.key]}
-                    onChange={(e) =>
-                      onChange(campo.key, Number.parseFloat(e.target.value))
-                    }
+                    </button>
+                    <button
+                      onClick={() => handleTablillaChange("pesada")}
+                      className={`flex-1 rounded-lg border-2 px-4 py-3 text-sm font-medium transition-colors ${
+                        tipoTablilla === "pesada"
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-border bg-background text-foreground hover:border-primary/50"
+                      }`}
+                    >
+                      Tablilla Pesada
+                      <span className="block text-xs font-normal mt-1 opacity-75">
+                        1.100 kg/m • 0.12 m
+                      </span>
+                    </button>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  {grupo.campos.map((campo) => (
+                    <div key={campo.key} className="flex flex-col gap-1.5">
+                      <Label htmlFor={campo.key} className="text-sm font-medium">
+                        {campo.label}
+                        {campo.suffix ? (
+                          <span className="ml-1 text-xs font-normal text-muted-foreground">
+                            ({campo.suffix})
+                          </span>
+                        ) : null}
+                      </Label>
+                      <Input
+                        id={campo.key}
+                        type="number"
+                        inputMode="decimal"
+                        step={campo.step ?? "any"}
+                        min={0}
+                        value={Number.isNaN(valores[campo.key]) ? "" : valores[campo.key]}
+                        onChange={(e) =>
+                          onChange(campo.key, Number.parseFloat(e.target.value))
+                        }
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : grupo.especial === "panoFijo" ? (
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center justify-between">
+                  <Label className="text-sm font-medium">Activar paño fijo</Label>
+                  <Switch
+                    checked={Boolean(valores.panoFijoEnabled)}
+                    onCheckedChange={(checked) => onChange("panoFijoEnabled", checked ? 1 : 0)}
                   />
                 </div>
-              ))}
-            </div>
+                {Boolean(valores.panoFijoEnabled) && (
+                  <>
+                    <div className={`grid grid-cols-1 gap-4 sm:grid-cols-2 overflow-hidden transition-all duration-300`}>
+                      {grupo.campos.map((campo) => (
+                        <div key={campo.key} className="flex flex-col gap-1.5">
+                          <Label htmlFor={campo.key} className="text-sm font-medium">
+                            {campo.label}
+                            {campo.suffix ? (
+                              <span className="ml-1 text-xs font-normal text-muted-foreground">
+                                ({campo.suffix})
+                              </span>
+                            ) : null}
+                          </Label>
+                          <Input
+                            id={campo.key}
+                            type="number"
+                            inputMode="decimal"
+                            step={campo.step ?? "any"}
+                            min={0}
+                            value={Number.isNaN(valores[campo.key]) ? "" : valores[campo.key]}
+                            onChange={(e) =>
+                              onChange(campo.key, Number.parseFloat(e.target.value))
+                            }
+                          />
+                        </div>
+                      ))}
+                    </div>
+                    <div className="border-t pt-4">
+                      <button
+                        onClick={() => setPanoFijoRevExpanded(!panoFijoRevExpanded)}
+                        className="flex items-center justify-between w-full mb-3 hover:opacity-75 transition-opacity"
+                      >
+                        <Label className="text-sm font-medium cursor-pointer">
+                          Revestimiento paño fijo
+                        </Label>
+                        <div className="flex items-center gap-2">
+                          <Switch
+                            checked={Boolean(valores.panoFijoRevEnabled)}
+                            onCheckedChange={(checked) => onChange("panoFijoRevEnabled", checked ? 1 : 0)}
+                          />
+                          <ChevronDown
+                            className={`size-4 transition-transform duration-300 ${
+                              panoFijoRevExpanded ? "rotate-180" : ""
+                            }`}
+                          />
+                        </div>
+                      </button>
+                      {panoFijoRevExpanded && Boolean(valores.panoFijoRevEnabled) && (
+                        <div className="flex flex-col gap-1.5 animate-in fade-in duration-300">
+                          <Label htmlFor="panoFijoRevPrecioM2" className="text-sm font-medium">
+                            Precio material
+                            <span className="ml-1 text-xs font-normal text-muted-foreground">
+                              ($/m²)
+                            </span>
+                          </Label>
+                          <Input
+                            id="panoFijoRevPrecioM2"
+                            type="number"
+                            inputMode="decimal"
+                            step="0.01"
+                            min={0}
+                            value={Number.isNaN(valores.panoFijoRevPrecioM2) ? "" : valores.panoFijoRevPrecioM2}
+                            onChange={(e) =>
+                              onChange("panoFijoRevPrecioM2", Number.parseFloat(e.target.value))
+                            }
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
+            ) : grupo.especial === "revestimiento" ? (
+              <div className="flex flex-col gap-4">
+                <button
+                  onClick={() => setRevestimientoExpanded(!revestimientoExpanded)}
+                  className="flex items-center justify-between hover:opacity-75 transition-opacity"
+                >
+                  <Label className="text-sm font-medium cursor-pointer">
+                    Agregar revestimiento
+                  </Label>
+                  <Switch
+                    checked={revestimientoExpanded}
+                    onCheckedChange={(checked) => setRevestimientoExpanded(checked)}
+                  />
+                </button>
+                {revestimientoExpanded && (
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 animate-in fade-in duration-300">
+                    {grupo.campos.map((campo) => (
+                      <div key={campo.key} className="flex flex-col gap-1.5">
+                        <Label htmlFor={campo.key} className="text-sm font-medium">
+                          {campo.label}
+                          {campo.suffix ? (
+                            <span className="ml-1 text-xs font-normal text-muted-foreground">
+                              ({campo.suffix})
+                            </span>
+                          ) : null}
+                        </Label>
+                        <Input
+                          id={campo.key}
+                          type="number"
+                          inputMode="decimal"
+                          step={campo.step ?? "any"}
+                          min={0}
+                          value={Number.isNaN(valores[campo.key]) ? "" : valores[campo.key]}
+                          onChange={(e) =>
+                            onChange(campo.key, Number.parseFloat(e.target.value))
+                          }
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                {grupo.campos.map((campo) => (
+                  <div key={campo.key} className="flex flex-col gap-1.5">
+                    <Label htmlFor={campo.key} className="text-sm font-medium">
+                      {campo.label}
+                      {campo.suffix ? (
+                        <span className="ml-1 text-xs font-normal text-muted-foreground">
+                          ({campo.suffix})
+                        </span>
+                      ) : null}
+                    </Label>
+                    <Input
+                      id={campo.key}
+                      type="number"
+                      inputMode="decimal"
+                      step={campo.step ?? "any"}
+                      min={0}
+                      value={Number.isNaN(valores[campo.key]) ? "" : valores[campo.key]}
+                      onChange={(e) =>
+                        onChange(campo.key, Number.parseFloat(e.target.value))
+                      }
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
       ))}
