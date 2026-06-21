@@ -64,6 +64,7 @@ const GRUPOS: Grupo[] = [
       { key: "revAlto", label: "Alto", suffix: "m", step: "0.01" },
       { key: "precioRevM2", label: "Precio por m²", suffix: "$", step: "100" },
     ],
+    especial: "revestimiento",
   },
   {
     titulo: "Accesorios",
@@ -99,6 +100,7 @@ export function CamposCotizador({ valores, onChange }: Props) {
   const [tipoTablilla, setTipoTablilla] = useState<"liviana" | "pesada">("liviana")
   const [panoFijoExpanded, setPanoFijoExpanded] = useState(false)
   const [panoFijoRevExpanded, setPanoFijoRevExpanded] = useState(false)
+  const [revestimientoExpanded, setRevestimientoExpanded] = useState(false)
 
   const handleTablillaChange = (tipo: "liviana" | "pesada") => {
     setTipoTablilla(tipo)
@@ -267,6 +269,47 @@ export function CamposCotizador({ valores, onChange }: Props) {
                       )}
                     </div>
                   </>
+                )}
+              </div>
+            ) : grupo.especial === "revestimiento" ? (
+              <div className="flex flex-col gap-4">
+                <button
+                  onClick={() => setRevestimientoExpanded(!revestimientoExpanded)}
+                  className="flex items-center justify-between hover:opacity-75 transition-opacity"
+                >
+                  <span className="flex-1 text-left" />
+                  <ChevronDown
+                    className={`size-4 transition-transform duration-300 ${
+                      revestimientoExpanded ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+                {revestimientoExpanded && (
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 animate-in fade-in duration-300">
+                    {grupo.campos.map((campo) => (
+                      <div key={campo.key} className="flex flex-col gap-1.5">
+                        <Label htmlFor={campo.key} className="text-sm font-medium">
+                          {campo.label}
+                          {campo.suffix ? (
+                            <span className="ml-1 text-xs font-normal text-muted-foreground">
+                              ({campo.suffix})
+                            </span>
+                          ) : null}
+                        </Label>
+                        <Input
+                          id={campo.key}
+                          type="number"
+                          inputMode="decimal"
+                          step={campo.step ?? "any"}
+                          min={0}
+                          value={Number.isNaN(valores[campo.key]) ? "" : valores[campo.key]}
+                          onChange={(e) =>
+                            onChange(campo.key, Number.parseFloat(e.target.value))
+                          }
+                        />
+                      </div>
+                    ))}
+                  </div>
                 )}
               </div>
             ) : (
