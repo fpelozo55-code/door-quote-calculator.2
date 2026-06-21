@@ -197,31 +197,63 @@ export function CamposCotizador({ valores, onChange }: Props) {
                   />
                 </div>
                 {Boolean(valores.panoFijoEnabled) && (
-                  <div className={`grid grid-cols-1 gap-4 sm:grid-cols-2 overflow-hidden transition-all duration-300`}>
-                    {grupo.campos.map((campo) => (
-                      <div key={campo.key} className="flex flex-col gap-1.5">
-                        <Label htmlFor={campo.key} className="text-sm font-medium">
-                          {campo.label}
-                          {campo.suffix ? (
-                            <span className="ml-1 text-xs font-normal text-muted-foreground">
-                              ({campo.suffix})
-                            </span>
-                          ) : null}
-                        </Label>
-                        <Input
-                          id={campo.key}
-                          type="number"
-                          inputMode="decimal"
-                          step={campo.step ?? "any"}
-                          min={0}
-                          value={Number.isNaN(valores[campo.key]) ? "" : valores[campo.key]}
-                          onChange={(e) =>
-                            onChange(campo.key, Number.parseFloat(e.target.value))
-                          }
+                  <>
+                    <div className={`grid grid-cols-1 gap-4 sm:grid-cols-2 overflow-hidden transition-all duration-300`}>
+                      {grupo.campos.map((campo) => (
+                        <div key={campo.key} className="flex flex-col gap-1.5">
+                          <Label htmlFor={campo.key} className="text-sm font-medium">
+                            {campo.label}
+                            {campo.suffix ? (
+                              <span className="ml-1 text-xs font-normal text-muted-foreground">
+                                ({campo.suffix})
+                              </span>
+                            ) : null}
+                          </Label>
+                          <Input
+                            id={campo.key}
+                            type="number"
+                            inputMode="decimal"
+                            step={campo.step ?? "any"}
+                            min={0}
+                            value={Number.isNaN(valores[campo.key]) ? "" : valores[campo.key]}
+                            onChange={(e) =>
+                              onChange(campo.key, Number.parseFloat(e.target.value))
+                            }
+                          />
+                        </div>
+                      ))}
+                    </div>
+                    <div className="border-t pt-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <Label className="text-sm font-medium">Revestimiento paño fijo</Label>
+                        <Switch
+                          checked={Boolean(valores.panoFijoRevEnabled)}
+                          onCheckedChange={(checked) => onChange("panoFijoRevEnabled", checked ? 1 : 0)}
                         />
                       </div>
-                    ))}
-                  </div>
+                      {Boolean(valores.panoFijoRevEnabled) && (
+                        <div className="flex flex-col gap-1.5">
+                          <Label htmlFor="panoFijoRevPrecioM2" className="text-sm font-medium">
+                            Precio material
+                            <span className="ml-1 text-xs font-normal text-muted-foreground">
+                              ($/m²)
+                            </span>
+                          </Label>
+                          <Input
+                            id="panoFijoRevPrecioM2"
+                            type="number"
+                            inputMode="decimal"
+                            step="0.01"
+                            min={0}
+                            value={Number.isNaN(valores.panoFijoRevPrecioM2) ? "" : valores.panoFijoRevPrecioM2}
+                            onChange={(e) =>
+                              onChange("panoFijoRevPrecioM2", Number.parseFloat(e.target.value))
+                            }
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </>
                 )}
               </div>
             ) : (

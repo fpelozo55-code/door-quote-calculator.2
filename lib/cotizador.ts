@@ -13,6 +13,8 @@ export type Parametros = {
   panoFijoAlto: number
   panoFijoAncho: number
   panoFijoKgm: number
+  panoFijoRevEnabled: boolean
+  panoFijoRevPrecioM2: number
   revAncho: number
   revAlto: number
   precioRevM2: number
@@ -36,6 +38,7 @@ export type Resultado = {
   m2Revestimiento: number
   costoRevestimiento: number
   costoPanoFijo: number
+  costoPanoFijoRev: number
   costoBisagras: number
   costoCerradura: number
   costoPicaporte: number
@@ -63,6 +66,8 @@ export const VALORES_INICIALES: Parametros = {
   panoFijoAlto: 0,
   panoFijoAncho: 0,
   panoFijoKgm: 0,
+  panoFijoRevEnabled: false,
+  panoFijoRevPrecioM2: 0,
   revAncho: 0,
   revAlto: 0,
   precioRevM2: 0,
@@ -97,6 +102,9 @@ export function calcular(p: Parametros): Resultado {
   const perimetroPanoFijo = Boolean(p.panoFijoEnabled) ? (p.panoFijoAlto + p.panoFijoAncho) * 2 : 0
   const costoPanoFijo = perimetroPanoFijo * p.panoFijoKgm * p.precioKg
 
+  const m2PanoFijo = Boolean(p.panoFijoEnabled) ? p.panoFijoAlto * p.panoFijoAncho : 0
+  const costoPanoFijoRev = Boolean(p.panoFijoRevEnabled) ? m2PanoFijo * p.panoFijoRevPrecioM2 : 0
+
   const costoBisagras = p.bisagras * p.precioBisagra
   const costoCerradura = p.cerradura
   const costoPicaporte = p.picaporte
@@ -114,6 +122,7 @@ export function calcular(p: Parametros): Resultado {
     costoTablilla +
     costoRevestimiento +
     costoPanoFijo +
+    costoPanoFijoRev +
     costoAccesorios +
     costoOtros
 
@@ -132,6 +141,7 @@ export function calcular(p: Parametros): Resultado {
     m2Revestimiento,
     costoRevestimiento,
     costoPanoFijo,
+    costoPanoFijoRev,
     costoBisagras,
     costoCerradura,
     costoPicaporte,
