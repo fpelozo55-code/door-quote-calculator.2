@@ -280,17 +280,10 @@ export function CamposCotizador({ valores, onChange }: Props) {
                   <Label className="text-sm font-medium cursor-pointer">
                     Agregar revestimiento
                   </Label>
-                  <div className="flex items-center gap-2">
-                    <Switch
-                      checked={revestimientoExpanded}
-                      onCheckedChange={(checked) => setRevestimientoExpanded(checked)}
-                    />
-                    <ChevronDown
-                      className={`size-4 transition-transform duration-300 ${
-                        revestimientoExpanded ? "rotate-180" : ""
-                      }`}
-                    />
-                  </div>
+                  <Switch
+                    checked={revestimientoExpanded}
+                    onCheckedChange={(checked) => setRevestimientoExpanded(checked)}
+                  />
                 </button>
                 {revestimientoExpanded && (
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 animate-in fade-in duration-300">
