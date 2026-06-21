@@ -4,8 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import type { Parametros } from "@/lib/cotizador"
-import { Ruler, Layers, Wrench, PlusCircle, SquareStack } from "lucide-react"
+import { Ruler, Layers, Wrench, PlusCircle, SquareStack, ChevronDown } from "lucide-react"
 import { useState } from "react"
+import { Switch } from "@/components/ui/switch"
 
 type Campo = {
   key: keyof Parametros
@@ -43,6 +44,16 @@ const GRUPOS: Grupo[] = [
       { key: "cantTravesanos", label: "Cantidad travesaños", step: "1" },
     ],
     especial: "tablilla",
+  },
+  {
+    titulo: "Paño fijo",
+    icon: <SquareStack className="size-4" />,
+    campos: [
+      { key: "panoFijoAlto", label: "Alto", suffix: "m", step: "0.01" },
+      { key: "panoFijoAncho", label: "Ancho", suffix: "m", step: "0.01" },
+      { key: "panoFijoKgm", label: "Peso del perfil", suffix: "kg/m", step: "0.001" },
+    ],
+    especial: "panoFijo",
   },
   {
     titulo: "Revestimiento",
@@ -86,6 +97,7 @@ type Props = {
 
 export function CamposCotizador({ valores, onChange }: Props) {
   const [tipoTablilla, setTipoTablilla] = useState<"liviana" | "pesada">("liviana")
+  const [panoFijoExpanded, setPanoFijoExpanded] = useState(false)
 
   const handleTablillaChange = (tipo: "liviana" | "pesada") => {
     setTipoTablilla(tipo)
@@ -174,6 +186,43 @@ export function CamposCotizador({ valores, onChange }: Props) {
                     </div>
                   ))}
                 </div>
+              </div>
+            ) : grupo.especial === "panoFijo" ? (
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center justify-between">
+                  <Label className="text-sm font-medium">Activar paño fijo</Label>
+                  <Switch
+                    checked={valores.panoFijoEnabled}
+                    onCheckedChange={(checked) => onChange("panoFijoEnabled", checked ? 1 : 0)}
+                  />
+                </div>
+                {valores.panoFijoEnabled && (
+                  <div className={`grid grid-cols-1 gap-4 sm:grid-cols-2 overflow-hidden transition-all duration-300`}>
+                    {grupo.campos.map((campo) => (
+                      <div key={campo.key} className="flex flex-col gap-1.5">
+                        <Label htmlFor={campo.key} className="text-sm font-medium">
+                          {campo.label}
+                          {campo.suffix ? (
+                            <span className="ml-1 text-xs font-normal text-muted-foreground">
+                              ({campo.suffix})
+                            </span>
+                          ) : null}
+                        </Label>
+                        <Input
+                          id={campo.key}
+                          type="number"
+                          inputMode="decimal"
+                          step={campo.step ?? "any"}
+                          min={0}
+                          value={Number.isNaN(valores[campo.key]) ? "" : valores[campo.key]}
+                          onChange={(e) =>
+                            onChange(campo.key, Number.parseFloat(e.target.value))
+                          }
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             ) : (
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

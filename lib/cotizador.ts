@@ -9,6 +9,10 @@ export type Parametros = {
   pesoTablilla: number
   cantTravesanos: number
   anchoTablilla: number
+  panoFijoEnabled: boolean
+  panoFijoAlto: number
+  panoFijoAncho: number
+  panoFijoKgm: number
   revAncho: number
   revAlto: number
   precioRevM2: number
@@ -31,6 +35,7 @@ export type Resultado = {
   costoAluminio: number
   m2Revestimiento: number
   costoRevestimiento: number
+  costoPanoFijo: number
   costoBisagras: number
   costoCerradura: number
   costoPicaporte: number
@@ -54,6 +59,10 @@ export const VALORES_INICIALES: Parametros = {
   pesoTablilla: 0.65,
   cantTravesanos: 3,
   anchoTablilla: 0.11,
+  panoFijoEnabled: false,
+  panoFijoAlto: 0,
+  panoFijoAncho: 0,
+  panoFijoKgm: 0,
   revAncho: 0,
   revAlto: 0,
   precioRevM2: 0,
@@ -85,6 +94,9 @@ export function calcular(p: Parametros): Resultado {
   const costoAluminio =
     costoMarco + costoBatiente + costoTravesano + costoTablilla
 
+  const metrosPanoFijo = p.panoFijoEnabled ? p.panoFijoAlto * p.panoFijoAncho : 0
+  const costoPanoFijo = metrosPanoFijo * p.panoFijoKgm * p.precioKg
+
   const costoBisagras = p.bisagras * p.precioBisagra
   const costoCerradura = p.cerradura
   const costoPicaporte = p.picaporte
@@ -101,6 +113,7 @@ export function calcular(p: Parametros): Resultado {
     costoTravesano +
     costoTablilla +
     costoRevestimiento +
+    costoPanoFijo +
     costoAccesorios +
     costoOtros
 
@@ -118,6 +131,7 @@ export function calcular(p: Parametros): Resultado {
     costoAluminio,
     m2Revestimiento,
     costoRevestimiento,
+    costoPanoFijo,
     costoBisagras,
     costoCerradura,
     costoPicaporte,
