@@ -98,6 +98,7 @@ type Props = {
 export function CamposCotizador({ valores, onChange }: Props) {
   const [tipoTablilla, setTipoTablilla] = useState<"liviana" | "pesada">("liviana")
   const [panoFijoExpanded, setPanoFijoExpanded] = useState(false)
+  const [panoFijoRevExpanded, setPanoFijoRevExpanded] = useState(false)
 
   const handleTablillaChange = (tipo: "liviana" | "pesada") => {
     setTipoTablilla(tipo)
@@ -224,15 +225,27 @@ export function CamposCotizador({ valores, onChange }: Props) {
                       ))}
                     </div>
                     <div className="border-t pt-4">
-                      <div className="flex items-center justify-between mb-3">
-                        <Label className="text-sm font-medium">Revestimiento paño fijo</Label>
-                        <Switch
-                          checked={Boolean(valores.panoFijoRevEnabled)}
-                          onCheckedChange={(checked) => onChange("panoFijoRevEnabled", checked ? 1 : 0)}
-                        />
-                      </div>
-                      {Boolean(valores.panoFijoRevEnabled) && (
-                        <div className="flex flex-col gap-1.5">
+                      <button
+                        onClick={() => setPanoFijoRevExpanded(!panoFijoRevExpanded)}
+                        className="flex items-center justify-between w-full mb-3 hover:opacity-75 transition-opacity"
+                      >
+                        <Label className="text-sm font-medium cursor-pointer">
+                          Revestimiento paño fijo
+                        </Label>
+                        <div className="flex items-center gap-2">
+                          <Switch
+                            checked={Boolean(valores.panoFijoRevEnabled)}
+                            onCheckedChange={(checked) => onChange("panoFijoRevEnabled", checked ? 1 : 0)}
+                          />
+                          <ChevronDown
+                            className={`size-4 transition-transform duration-300 ${
+                              panoFijoRevExpanded ? "rotate-180" : ""
+                            }`}
+                          />
+                        </div>
+                      </button>
+                      {panoFijoRevExpanded && Boolean(valores.panoFijoRevEnabled) && (
+                        <div className="flex flex-col gap-1.5 animate-in fade-in duration-300">
                           <Label htmlFor="panoFijoRevPrecioM2" className="text-sm font-medium">
                             Precio material
                             <span className="ml-1 text-xs font-normal text-muted-foreground">
