@@ -277,12 +277,20 @@ export function CamposCotizador({ valores, onChange }: Props) {
                   onClick={() => setRevestimientoExpanded(!revestimientoExpanded)}
                   className="flex items-center justify-between hover:opacity-75 transition-opacity"
                 >
-                  <span className="flex-1 text-left" />
-                  <ChevronDown
-                    className={`size-4 transition-transform duration-300 ${
-                      revestimientoExpanded ? "rotate-180" : ""
-                    }`}
-                  />
+                  <Label className="text-sm font-medium cursor-pointer">
+                    Agregar revestimiento
+                  </Label>
+                  <div className="flex items-center gap-2">
+                    <Switch
+                      checked={revestimientoExpanded}
+                      onCheckedChange={(checked) => setRevestimientoExpanded(checked)}
+                    />
+                    <ChevronDown
+                      className={`size-4 transition-transform duration-300 ${
+                        revestimientoExpanded ? "rotate-180" : ""
+                      }`}
+                    />
+                  </div>
                 </button>
                 {revestimientoExpanded && (
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 animate-in fade-in duration-300">
