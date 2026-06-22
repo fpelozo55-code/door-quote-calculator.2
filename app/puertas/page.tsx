@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { CamposCotizador } from "@/components/campos-cotizador"
 import { ResultadoPresupuesto } from "@/components/resultado-presupuesto"
+import { BocetoPuerta } from "@/components/boceto-puerta"
 import {
   calcular,
   VALORES_INICIALES,
@@ -206,23 +207,29 @@ export default function Page() {
           </div>
 
           {!mostrarClienteView && (
-            <ResultadoPresupuesto
-              resultado={resultado}
-              parametros={valores}
-              cliente={cliente}
-              fecha={fecha}
-              esCliente={false}
-            />
+            <>
+              <ResultadoPresupuesto
+                resultado={resultado}
+                parametros={valores}
+                cliente={cliente}
+                fecha={fecha}
+                esCliente={false}
+              />
+              <BocetoPuerta resultado={resultado} parametros={valores} />
+            </>
           )}
 
           {mostrarClienteView && (
-            <ResultadoPresupuesto
-              resultado={resultado}
-              parametros={valores}
-              cliente={cliente}
-              fecha={fecha}
-              esCliente={true}
-            />
+            <>
+              <ResultadoPresupuesto
+                resultado={resultado}
+                parametros={valores}
+                cliente={cliente}
+                fecha={fecha}
+                esCliente={true}
+              />
+              <BocetoPuerta resultado={resultado} parametros={valores} />
+            </>
           )}
 
           <div className="hidden print:block print:page-break-before">
@@ -233,6 +240,9 @@ export default function Page() {
               fecha={fecha}
               esCliente={false}
             />
+            <div className="mt-6">
+              <BocetoPuerta resultado={resultado} parametros={valores} />
+            </div>
           </div>
 
           <div className="hidden print:block">
